@@ -23,7 +23,7 @@
                         Selecionar
                     </button>
                     <div class="character-nome">Sniper</div>
-                    <div class="character-habilidade">+2 ataque</div>
+                    <div class="character-habilidade">D20 +3 bônus. Acerta com 11+.</div>
                     <img class="character-img" src="Imgs/Player/Sniper.png" alt="Sniper">
                 </div>
                 <div class="character-option">
@@ -31,7 +31,7 @@
                         Selecionar
                     </button>
                     <div class="character-nome">Hacker</div>
-                    <div class="character-habilidade">+1 dado, -2 dano</div>
+                    <div class="character-habilidade">D20 + D12. Acerta com 24+.</div>
                     <img class="character-img" src="Imgs/Player/Hacker.png" alt="Hacker">
                 </div>
                 <div class="character-option">
@@ -39,7 +39,7 @@
                         Selecionar
                     </button>
                     <div class="character-nome">Assassina</div>
-                    <div class="character-habilidade">Ignora 1º dano</div>
+                    <div class="character-habilidade">D20. Acerta com 13+. Ignora 1º dano.</div>
                     <img class="character-img" src="Imgs/Player/Assasin.png" alt="Assassina">
                 </div>
             </div>
@@ -92,22 +92,46 @@
 
             <!-- Controles de Combate -->
             <div class="combat-controls">
-                <label for="dado">Resultado do dado:</label>
+                <label for="dado">Resultado do D20:</label>
                 <select id="dado">
+                    <!-- Opções de 1 a 20 -->
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                     <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
                 </select>
                 <div id="dadoHackerContainer" style="display:none;">
-                    <label for="dadoHacker">Dado extra (d4):</label>
+                    <label for="dadoHacker">Resultado do D12:</label>
                     <select id="dadoHacker">
+                        <!-- Opções de 1 a 12 -->
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
                     </select>
                 </div>
                 <button id="confirmarDadoBtn">Confirmar Dado</button>
@@ -120,11 +144,6 @@
 
         <div id="resultado" class="hidden">
             <h2 id="resultadoFinal"></h2>
-            <div id="estatisticas" class="status">
-                <p>Turnos jogados: <span id="turnosJogados">0</span></p>
-                <p>Dano causado: <span id="danoCausado">0</span></p>
-            </div>
-            <button id="sortearRecompensaBtn">Sortear Recompensa</button>
             <p id="recompensa" class="hidden"></p>
             <button id="reiniciarBtn" class="reiniciar-btn">Voltar ao Início</button>
         </div>

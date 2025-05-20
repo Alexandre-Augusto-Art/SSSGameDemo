@@ -66,27 +66,37 @@ class Game {
 
     processarAtaqueJogador() {
         let dado = parseInt(document.getElementById("dado").value);
-        let bonus = 0;
         let ataqueTotal = dado;
-        let limiteAcerto = 4;
-        if (this.personagem === "Sniper") bonus = 2;
-        if (this.personagem === "Hacker") {
-            let dadoHacker = parseInt(document.getElementById("dadoHacker").value);
-            ataqueTotal = dado + dadoHacker;
-            limiteAcerto = 6;
-        } else {
-            ataqueTotal = dado + bonus;
-        }
         let mensagemCentral = '';
         let tipoMensagem = '';
-        if (ataqueTotal >= limiteAcerto) {
-            this.vidaIA--;
-            this.danoCausado++;
-            mensagemCentral = `Você acertou a IA! (Dado: ${dado}${this.personagem === "Hacker" ? ` + ${document.getElementById("dadoHacker").value}` : (bonus ? ` + ${bonus}` : '')} = ${ataqueTotal})`;
+        let acertou = false;
+        let dano = 1; // Dano padrão
+
+        // Verifica acerto crítico
+        if (dado === 20) {
+            dano = 2;
+            mensagemCentral = `ACERTO CRÍTICO! (D20: ${dado})`;
+            acertou = true;
+        } else if (this.personagem === "Sniper") {
+            ataqueTotal = dado + 3;
+            if (ataqueTotal >= 11) acertou = true;
+            mensagemCentral = acertou ? `Sniper acertou! (D20: ${dado} + 3 = ${ataqueTotal})` : `Sniper errou. (D20: ${dado} + 3 = ${ataqueTotal})`;
+        } else if (this.personagem === "Hacker") {
+            let dadoHacker = parseInt(document.getElementById("dadoHacker").value);
+            ataqueTotal = dado + dadoHacker;
+            if (ataqueTotal >= 24) acertou = true;
+            mensagemCentral = acertou ? `Hacker acertou! (D20: ${dado} + D12: ${dadoHacker} = ${ataqueTotal})` : `Hacker errou. (D20: ${dado} + D12: ${dadoHacker} = ${ataqueTotal})`;
+        } else if (this.personagem === "Assassina") {
+            if (dado >= 13) acertou = true;
+            mensagemCentral = acertou ? `Assassina acertou! (D20: ${dado})` : `Assassina errou. (D20: ${dado})`;
+        }
+
+        if (acertou) {
+            this.vidaIA -= dano;
+            this.danoCausado += dano;
             tipoMensagem = 'acerto';
             this.mostrarDanoIA();
         } else {
-            mensagemCentral = `Você errou o ataque. (Dado: ${dado}${this.personagem === "Hacker" ? ` + ${document.getElementById("dadoHacker").value}` : (bonus ? ` + ${bonus}` : '')} = ${ataqueTotal})`;
             tipoMensagem = 'erro';
         }
         this.exibirMensagemCentral(mensagemCentral, tipoMensagem);
@@ -157,25 +167,45 @@ class Game {
 
     iniciarAtaqueIA() {
         // Simula a rolagem do dado da IA
-        const ataqueIA = Math.ceil(Math.random() * 6);
+        const ataqueIA = Math.ceil(Math.random() * 20); // D20
         let mensagemCentral = '';
         let tipoMensagem = '';
         let resultadoIA = '';
+        let dano = 1; // Dano padrão
         const playerCharacter = document.getElementById('playerCharacter');
         const diceEl = document.getElementById('diceAnimation');
 
-        if (ataqueIA >= 5) {
+        // Verifica acerto crítico da IA
+        if (ataqueIA === 20) {
+            dano = 2;
+            if (this.personagem === "Assassina" && !this.ignorouDano) {
+                this.ignorouDano = true;
+                resultadoIA = "Você evitou o ataque crítico! (Habilidade da Assassina)";
+                mensagemCentral = resultadoIA;
+                tipoMensagem = 'acerto';
+            } else {
+                this.vidaJogador -= dano;
+                resultadoIA = "ACERTO CRÍTICO DA IA! (D20: " + ataqueIA + ")";
+                mensagemCentral = resultadoIA;
+                tipoMensagem = 'erro';
+                if (playerCharacter) {
+                    playerCharacter.classList.add('damage-effect');
+                    setTimeout(() => {
+                        playerCharacter.classList.remove('damage-effect');
+                    }, 500);
+                }
+            }
+        } else if (ataqueIA >= 13) {
             if (this.personagem === "Assassina" && !this.ignorouDano) {
                 this.ignorouDano = true;
                 resultadoIA = "Você evitou o ataque! (Habilidade da Assassina)";
                 mensagemCentral = resultadoIA;
                 tipoMensagem = 'acerto';
             } else {
-                this.vidaJogador--;
-                resultadoIA = "A IA te acertou!";
+                this.vidaJogador -= dano;
+                resultadoIA = "A IA te acertou! (D20: " + ataqueIA + ")";
                 mensagemCentral = resultadoIA;
                 tipoMensagem = 'erro';
-                // Efeito de dano no personagem do jogador
                 if (playerCharacter) {
                     playerCharacter.classList.add('damage-effect');
                     setTimeout(() => {
@@ -184,21 +214,18 @@ class Game {
                 }
             }
         } else {
-            resultadoIA = "A IA errou o ataque!";
+            resultadoIA = "A IA errou o ataque! (D20: " + ataqueIA + ")";
             mensagemCentral = resultadoIA;
             tipoMensagem = 'acerto';
         }
-
         // Esconde mensagem antiga da IA
         const resultadoIAEl = document.getElementById("resultadoIA");
         if (resultadoIAEl) resultadoIAEl.classList.add("hidden");
-
         // Exibe o número sorteado da IA
         if (diceEl) {
             diceEl.textContent = ataqueIA;
             diceEl.classList.remove('hidden');
         }
-
         // Exibe mensagem centralizada da IA após a do jogador
         setTimeout(() => {
             this.exibirMensagemCentral(mensagemCentral, tipoMensagem, () => {
@@ -209,7 +236,6 @@ class Game {
                 }
             });
             this.atualizarBarrasVida();
-
             // Verifica se o jogador ou a IA foram derrotados
             if (this.vidaJogador <= 0 || this.vidaIA <= 0) {
                 this.encerrarJogo();
@@ -245,12 +271,24 @@ class Game {
         if (playerAttackMessage) playerAttackMessage.classList.add('hidden');
         document.getElementById("combate").classList.add("hidden");
         document.getElementById("resultado").classList.remove("hidden");
-        const resultadoFinal = this.vidaIA <= 0 
-            ? "MISSÃO CONCLUÍDA! Você derrotou a IA."
-            : "VOCÊ FOI DELETADO. A IA venceu.";
-        document.getElementById("resultadoFinal").textContent = resultadoFinal;
-        document.getElementById("turnosJogados").textContent = this.turno;
-        document.getElementById("danoCausado").textContent = this.danoCausado;
+        // Esconde o botão de recompensa
+        const btnRecompensa = document.getElementById("sortearRecompensaBtn");
+        if (btnRecompensa) btnRecompensa.style.display = "none";
+        // Exibe título e mensagem hacker customizada
+        const resultadoFinal = document.getElementById("resultadoFinal");
+        const recompensaElement = document.getElementById("recompensa");
+        if (this.vidaIA <= 0) {
+            resultadoFinal.textContent = "Missão concluída com Sucesso!";
+            recompensaElement.innerHTML = `<pre>\t&gt; EVA: NEUTRALIZADA [STATUS TEMPORÁRIO]\n\t&gt; Acesso à garra autorizado.\n\t&gt; Recupere seu prêmio antes que o sistema reinicie.</pre>`;
+            recompensaElement.classList.remove("hidden");
+        } else {
+            resultadoFinal.textContent = "Missão FALHOU";
+            recompensaElement.innerHTML = `<pre>\t&gt; EVA: STATUS - ATIVA\n\t&gt; Tentativa de invasão: FALHA\n\t&gt; Permissão parcial concedida: roll_d4()</pre>`;
+            recompensaElement.classList.remove("hidden");
+        }
+        // Não exibe mais estatísticas
+        // document.getElementById("turnosJogados").textContent = this.turno;
+        // document.getElementById("danoCausado").textContent = this.danoCausado;
         // Atualiza as barras de vida uma última vez
         this.atualizarBarrasVida();
     }

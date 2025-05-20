@@ -63,6 +63,26 @@ button:hover, #confirmarDadoBtn:hover, .reiniciar-btn:hover, #sortearRecompensaB
   background: rgba(0,0,0,0.3);
 }
 
+.reiniciar-btn {
+  background: #ff003c !important;
+  color: #fff !important;
+  border: 2px solid #ff003c !important;
+  border-radius: 8px !important;
+  position: fixed !important;
+  right: 32px !important;
+  bottom: 32px !important;
+  z-index: 1000 !important;
+  box-shadow: 0 0 16px #ff003c99, 0 0 4px #fff;
+  font-size: 1.2em;
+  padding: 14px 32px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.reiniciar-btn:hover {
+  background: #fff !important;
+  color: #ff003c !important;
+  border-color: #fff !important;
+}
+
 /* --- NOTIFICAÇÕES E JANELAS --- */
 .player-attack-message, .resultado-ataque, #resultado, #estatisticas, .mensagem-sistema, #feedback {
   background: rgba(0,0,0,0.85);
@@ -600,4 +620,23 @@ html, body {
   margin-bottom: 0;
   text-align: center;
   opacity: 0.85;
+}
+
+#resultadoFinal {
+  margin-bottom: 0;
+  margin-top: 24px;
+  text-align: center;
+}
+#recompensa {
+  margin-top: 28px;
+  padding-left: 32px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace;
+  font-size: 1.15em;
+  background: rgba(0,0,0,0.85);
+  border-radius: 8px;
+  display: block;
+  max-width: 90vw;
+  white-space: pre;
 } 
