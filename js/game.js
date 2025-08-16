@@ -34,19 +34,26 @@ class Game {
         const playerCharacter = document.getElementById("playerCharacter");
         playerCharacter.src = imagemSrc;
         
+        
         // Atualiza HUD de vida do jogador
         const nomeJogador = document.getElementById("nomeJogador");
         const fotoJogador = document.getElementById("fotoJogador");
         if (nomeJogador) nomeJogador.textContent = p;
-        if (fotoJogador) fotoJogador.src = imagemSrc;
+        if (fotoJogador) {
+            const hudImgSrc = `Imgs/Player/HUD/${p}.png`;
+            fotoJogador.src = hudImgSrc;
+            // Remover quaisquer ajustes manuais anteriores
+            fotoJogador.style.objectPosition = "";
+            fotoJogador.style.transform = "";
+        }
         
         // Mostrar ou esconder o slot do dado extra
-        const dadoHackerContainer = document.getElementById("dadoHackerContainer");
-        if (dadoHackerContainer) {
-            if (p === "Hacker") {
-                dadoHackerContainer.style.display = "block";
+        const dadoHackerCol = document.getElementById("dadoHackerCol");
+        if (dadoHackerCol) {
+            if (p === "AAA-404") {
+                dadoHackerCol.style.display = "flex"; // mostra D12 acima
             } else {
-                dadoHackerContainer.style.display = "none";
+                dadoHackerCol.style.display = "none";
             }
         }
         
@@ -66,7 +73,9 @@ class Game {
 
     processarAtaqueJogador() {
         let dado = parseInt(document.getElementById("dado").value);
-        let ataqueTotal = dado;
+        let nivelBonus = parseInt(document.getElementById("nivelInput")?.value || '0');
+        let bonusD20 = parseInt(document.getElementById("bonusInput")?.value || '0');
+        let ataqueTotal = dado + (isNaN(nivelBonus) ? 0 : nivelBonus) + (isNaN(bonusD20) ? 0 : bonusD20);
         let mensagemCentral = '';
         let tipoMensagem = '';
         let acertou = false;
@@ -75,20 +84,20 @@ class Game {
         // Verifica acerto crítico
         if (dado === 20) {
             dano = 2;
-            mensagemCentral = `ACERTO CRÍTICO! (D20: ${dado})`;
+            mensagemCentral = `ACERTO CRÍTICO! (D20: ${dado} + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})`;
             acertou = true;
-        } else if (this.personagem === "Sniper") {
-            ataqueTotal = dado + 3;
+        } else if (this.personagem === "DeadScope") {
+            ataqueTotal = dado + 3 + (isNaN(nivelBonus) ? 0 : nivelBonus) + (isNaN(bonusD20) ? 0 : bonusD20);
             if (ataqueTotal >= 11) acertou = true;
-            mensagemCentral = acertou ? `Sniper acertou! (D20: ${dado} + 3 = ${ataqueTotal})` : `Sniper errou. (D20: ${dado} + 3 = ${ataqueTotal})`;
-        } else if (this.personagem === "Hacker") {
+            mensagemCentral = acertou ? `DeadScope acertou! (D20: ${dado} + 3 + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})` : `DeadScope errou. (D20: ${dado} + 3 + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})`;
+        } else if (this.personagem === "AAA-404") {
             let dadoHacker = parseInt(document.getElementById("dadoHacker").value);
-            ataqueTotal = dado + dadoHacker;
+            ataqueTotal = dado + dadoHacker + (isNaN(nivelBonus) ? 0 : nivelBonus) + (isNaN(bonusD20) ? 0 : bonusD20);
             if (ataqueTotal >= 24) acertou = true;
-            mensagemCentral = acertou ? `Hacker acertou! (D20: ${dado} + D12: ${dadoHacker} = ${ataqueTotal})` : `Hacker errou. (D20: ${dado} + D12: ${dadoHacker} = ${ataqueTotal})`;
-        } else if (this.personagem === "Assassina") {
-            if (dado >= 13) acertou = true;
-            mensagemCentral = acertou ? `Assassina acertou! (D20: ${dado})` : `Assassina errou. (D20: ${dado})`;
+            mensagemCentral = acertou ? `AAA-404 acertou! (D20: ${dado} + D12: ${dadoHacker} + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})` : `AAA-404 errou. (D20: ${dado} + D12: ${dadoHacker} + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})`;
+        } else if (this.personagem === "Naya") {
+            if (ataqueTotal >= 13) acertou = true;
+            mensagemCentral = acertou ? `Naya acertou! (D20: ${dado} + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})` : `Naya errou. (D20: ${dado} + Nivel: ${nivelBonus} + Bonus: ${isNaN(bonusD20)?0:bonusD20} = ${ataqueTotal})`;
         }
 
         if (acertou) {
@@ -323,7 +332,7 @@ class Game {
         const nomeJogador = document.getElementById("nomeJogador");
         const fotoJogador = document.getElementById("fotoJogador");
         if (nomeJogador) nomeJogador.textContent = "Jogador";
-        if (fotoJogador) fotoJogador.src = "Imgs/Player/Hacker.png";
+        if (fotoJogador) fotoJogador.src = "Imgs/Player/HUD/AAA-404.png";
         // Limpar resultados anteriores
         document.getElementById("recompensa").classList.add("hidden");
         document.getElementById("resultadoJogador")?.classList.add("hidden");
